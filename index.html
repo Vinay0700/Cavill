@@ -215,3 +215,220 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #000; color: #fff; overscroll-behavior-y: none; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="pb-24 pt-12 px-6">
+
+    <!-- Top Header & Streak -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Cavill Protocol</p>
+            <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
+        </div>
+        <div class="bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800">
+            <p class="text-sm font-medium text-orange-500">🔥 <span id="streakDisplay">0</span> Days</p>
+        </div>
+    </div>
+
+    <!-- TAB 1: WORKOUT -->
+    <div id="tab-workout" class="tab-content active">
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl mb-4">
+            <h2 id="workoutTitle" class="text-4xl font-black tracking-tight text-white mb-2">Loading...</h2>
+            <p class="text-zinc-400 text-sm mb-6">Strict form. Controlled eccentrics.</p>
+            
+            <div id="exerciseList" class="space-y-3 mb-8">
+                <!-- Exercises injected here via JS -->
+            </div>
+            
+            <button onclick="completeWorkout()" class="w-full py-4 bg-white text-black font-bold rounded-2xl active:scale-95 transition-transform">
+                Log Workout & Advance
+            </button>
+        </div>
+        <button onclick="requestNotifications()" class="w-full py-3 bg-zinc-900 border border-zinc-800 text-zinc-400 font-semibold rounded-2xl active:scale-95 transition-transform text-sm">
+            🔔 Enable Notifications
+        </button>
+    </div>
+
+    <!-- TAB 2: WEIGHT PROGRESS -->
+    <div id="tab-weight" class="tab-content">
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl">
+            <h2 class="text-2xl font-bold mb-4">Weight Log</h2>
+            <div class="flex gap-2 mb-6">
+                <input type="number" id="weightInput" placeholder="Enter kg..." class="flex-1 bg-black border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500">
+                <button onclick="logWeight()" class="bg-orange-500 px-6 font-bold rounded-xl active:scale-95">Save</button>
+            </div>
+            <div class="bg-black p-2 rounded-xl">
+                <canvas id="weightChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: PHOTOS -->
+    <div id="tab-photos" class="tab-content">
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl">
+            <h2 class="text-2xl font-bold mb-4">Physique Update</h2>
+            <p class="text-zinc-400 text-xs mb-4">Note: Local storage limits apply. This acts as a session viewer.</p>
+            
+            <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewPhoto(event)">
+            <label for="photoInput" class="block w-full py-4 bg-zinc-800 text-center font-bold rounded-2xl active:scale-95 transition-transform mb-6 border border-zinc-700 cursor-pointer">
+                📷 Select Photo
+            </label>
+            
+            <div id="photoPreview" class="w-full h-64 bg-black rounded-xl border border-zinc-800 flex items-center justify-center overflow-hidden">
+                <p class="text-zinc-600 text-sm">No photo selected</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <div class="fixed bottom-0 left-0 w-full bg-black/90 backdrop-blur-xl border-t border-zinc-800 pb-8 pt-4 px-6 flex justify-between z-50">
+        <button onclick="switchTab('workout')" id="btn-workout" class="nav-btn flex-1 text-white font-semibold flex flex-col items-center gap-1">
+            <span class="text-xl">🏋️</span><span class="text-[10px] uppercase tracking-wider">Routine</span>
+        </button>
+        <button onclick="switchTab('weight')" id="btn-weight" class="nav-btn flex-1 text-zinc-500 font-semibold flex flex-col items-center gap-1">
+            <span class="text-xl">📈</span><span class="text-[10px] uppercase tracking-wider">Weight</span>
+        </button>
+        <button onclick="switchTab('photos')" id="btn-photos" class="nav-btn flex-1 text-zinc-500 font-semibold flex flex-col items-center gap-1">
+            <span class="text-xl">📸</span><span class="text-[10px] uppercase tracking-wider">Photos</span>
+        </button>
+    </div>
+
+    <script>
+        // --- 1. WORKOUT LOGIC ---
+        const routineOrder = ["Pull", "Push", "Legs", "Rest", "Upper", "Lower", "Rest"];
+        const exercises = {
+            "Pull": ["Deadlifts - 3x5", "Pull-ups - 3x8-10", "Barbell Rows - 3x8-12", "Bicep Curls - 3x12"],
+            "Push": ["Bench Press - 3x5-8", "Overhead Press - 3x8-10", "Incline DB Press - 3x10", "Tricep Pushdowns - 3x12"],
+            "Legs": ["Squats - 3x5-8", "Leg Press - 3x10-12", "RDLs - 3x10", "Calf Raises - 4x15"],
+            "Rest": ["Active Recovery", "Light Stretching", "Walk 10k Steps"],
+            "Upper": ["Incline Bench - 3x8-10", "Lat Pulldowns - 3x10", "Lateral Raises - 4x15", "Arms Superset - 3x12"],
+            "Lower": ["Front Squats - 3x8-10", "Bulgarian Split Squats - 3x10/leg", "Hamstring Curls - 3x12", "Planks - 3x60s"]
+        };
+        
+        let currentDay = parseInt(localStorage.getItem('workoutDay')) || 0;
+        let streak = parseInt(localStorage.getItem('workoutStreak')) || 0;
+
+        function renderWorkout() {
+            const todayType = routineOrder[currentDay];
+            document.getElementById('workoutTitle').innerText = todayType;
+            document.getElementById('streakDisplay').innerText = streak;
+            
+            const listDiv = document.getElementById('exerciseList');
+            listDiv.innerHTML = exercises[todayType].map(ex => 
+                `<div class="bg-black p-4 rounded-xl border border-zinc-800 flex items-center justify-between">
+                    <span class="font-medium text-sm">${ex}</span>
+                    <input type="checkbox" class="w-5 h-5 accent-orange-500 rounded-md">
+                </div>`
+            ).join('');
+        }
+
+        function completeWorkout() {
+            currentDay = (currentDay + 1) % 7;
+            streak += 1;
+            localStorage.setItem('workoutDay', currentDay);
+            localStorage.setItem('workoutStreak', streak);
+            renderWorkout();
+            alert("Workout logged! Great job keeping the streak.");
+        }
+
+        // --- 2. WEIGHT GRAPH LOGIC ---
+        let weightData = JSON.parse(localStorage.getItem('weightData')) || [];
+        let weightChartInstance = null;
+
+        function initChart() {
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            weightChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: weightData.map((_, i) => `Day ${i+1}`),
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: weightData,
+                        borderColor: '#f97316', // Orange
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { grid: { color: '#27272a' } }, x: { grid: { display: false } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function logWeight() {
+            const val = document.getElementById('weightInput').value;
+            if(!val) return;
+            weightData.push(parseFloat(val));
+            localStorage.setItem('weightData', JSON.stringify(weightData));
+            
+            weightChartInstance.data.labels.push(`Day ${weightData.length}`);
+            weightChartInstance.data.datasets[0].data = weightData;
+            weightChartInstance.update();
+            document.getElementById('weightInput').value = '';
+        }
+
+        // --- 3. PHOTO LOGIC ---
+        function previewPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- 4. NAVIGATION LOGIC ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-white');
+                btn.classList.add('text-zinc-500');
+            });
+            document.getElementById(`btn-${tabId}`).classList.remove('text-zinc-500');
+            document.getElementById(`btn-${tabId}`).classList.add('text-white');
+        }
+
+        // --- 5. NOTIFICATIONS ---
+        function requestNotifications() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        alert("Notifications enabled! You will be reminded when the app is active.");
+                        setTimeout(() => { new Notification("Time to hit the iron. Stay consistent."); }, 5000);
+                    }
+                });
+            } else {
+                alert("Your browser does not support web notifications.");
+            }
+        }
+
+        // Initialize App
+        window.onload = () => {
+            renderWorkout();
+            initChart();
+        };
+    </script>
+</body>
+</html>
