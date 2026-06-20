@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Workout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #000; color: #fff; overscroll-behavior-y: none; }
+    </style>
+</head>
+<body class="p-6 pt-12">
+
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Protocol</p>
+            <h1 class="text-3xl font-bold tracking-tight">Today's Focus</h1>
+        </div>
+        <div class="bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800">
+            <p class="text-sm font-medium text-orange-500">🔥 <span id="streakDisplay">0</span> Days</p>
+        </div>
+    </div>
+
+    <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl">
+        <h2 id="workoutTitle" class="text-4xl font-black tracking-tight text-white mb-2">Loading...</h2>
+        <p class="text-zinc-400 text-sm mb-8">Stay disciplined. Form over ego.</p>
+        
+        <button onclick="completeWorkout()" class="w-full py-4 bg-white text-black font-semibold rounded-2xl active:scale-95 transition-transform">
+            Log Workout
+        </button>
+    </div>
+
+    <script>
+        const routine = ["Pull", "Push", "Legs", "Rest", "Upper", "Lower", "Rest"];
+        
+        // Load data from phone's local memory
+        let currentDay = parseInt(localStorage.getItem('workoutDay')) || 0;
+        let streak = parseInt(localStorage.getItem('workoutStreak')) || 0;
+
+        // Update the screen
+        document.getElementById('workoutTitle').innerText = routine[currentDay];
+        document.getElementById('streakDisplay').innerText = streak;
+
+        // Button click function
+        function completeWorkout() {
+            // Move to next day in routine
+            currentDay = (currentDay + 1) % 7;
+            streak += 1;
+
+            // Save back to phone memory
+            localStorage.setItem('workoutDay', currentDay);
+            localStorage.setItem('workoutStreak', streak);
+
+            // Update screen
+            document.getElementById('workoutTitle').innerText = routine[currentDay];
+            document.getElementById('streakDisplay').innerText = streak;
+        }
+    </script>
+</body>
+</html>
