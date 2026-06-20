@@ -5,116 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Protocol</title>
+    <title>Ultra Protocol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #000; color: #fff; overscroll-behavior-y: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, sans-serif; background-color: #0B0C0E; color: #E4E4E7; overscroll-behavior-y: none; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
 </head>
-<body class="pb-24 pt-12 px-6">
+<body class="pb-28 pt-14 px-6">
 
-    <!-- Top Header & Streak -->
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex justify-between items-end mb-6 border-b border-zinc-800/60 pb-4">
         <div>
-            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Cavill Protocol</p>
-            <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p class="text-[10px] font-black text-amber-500 uppercase tracking-[0.25em]">Ultra Phase I</p>
+            <h1 id="hudTitle" class="text-3xl font-bold tracking-tight text-zinc-100 mt-1">Console</h1>
         </div>
-        <div class="bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800">
-            <p class="text-sm font-medium text-orange-500">🔥 <span id="streakDisplay">0</span> Days</p>
+        <div class="bg-zinc-900 border border-amber-500/20 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+            <p class="text-xs font-mono font-bold text-amber-500">STREAK: <span id="streakDisplay">0</span></p>
         </div>
     </div>
 
-    <!-- TAB 1: WORKOUT -->
     <div id="tab-workout" class="tab-content active">
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl mb-4">
-            <h2 id="workoutTitle" class="text-4xl font-black tracking-tight text-white mb-2">Loading...</h2>
-            <p class="text-zinc-400 text-sm mb-6">Strict form. Controlled eccentrics.</p>
-            
-            <div id="exerciseList" class="space-y-3 mb-8">
-                <!-- Exercises injected here via JS -->
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-4">
+                <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">Fuel Ceiling</span>
+                <span id="calorieTarget" class="text-2xl font-light text-zinc-100 font-mono">---</span>
+            </div>
+            <div class="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-4">
+                <span class="text-[9px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">Activity Goal</span>
+                <span id="stepTarget" class="text-2xl font-light text-amber-500 font-mono">---</span>
+            </div>
+        </div>
+
+        <div class="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-4 mb-6">
+            <p id="quoteDisplay" class="text-xs text-zinc-400 italic font-medium leading-relaxed">"The mind always fails before the body."</p>
+        </div>
+
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="workoutTitle" class="text-2xl font-bold tracking-tight text-white uppercase">Loading Split...</h2>
+                <span class="text-[10px] bg-zinc-800 text-zinc-400 font-mono px-2 py-1 rounded-md font-bold">22 SETS</span>
             </div>
             
-            <button onclick="completeWorkout()" class="w-full py-4 bg-white text-black font-bold rounded-2xl active:scale-95 transition-transform">
-                Log Workout & Advance
+            <div id="exerciseList" class="space-y-2.5 mb-6">
+                </div>
+            
+            <button onclick="completeWorkout()" class="w-full py-4 bg-amber-500 text-black font-bold uppercase tracking-wider rounded-xl active:scale-98 transition-transform text-sm">
+                Mark Session Complete
             </button>
         </div>
-        <button onclick="requestNotifications()" class="w-full py-3 bg-zinc-900 border border-zinc-800 text-zinc-400 font-semibold rounded-2xl active:scale-95 transition-transform text-sm">
-            🔔 Enable Notifications
-        </button>
     </div>
 
-    <!-- TAB 2: WEIGHT PROGRESS -->
     <div id="tab-weight" class="tab-content">
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl">
-            <h2 class="text-2xl font-bold mb-4">Weight Log</h2>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 mb-6">
+            <h2 class="text-lg font-bold text-zinc-200 mb-4 tracking-tight">Weight Analysis</h2>
             <div class="flex gap-2 mb-6">
-                <input type="number" id="weightInput" placeholder="Enter kg..." class="flex-1 bg-black border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500">
-                <button onclick="logWeight()" class="bg-orange-500 px-6 font-bold rounded-xl active:scale-95">Save</button>
+                <input type="number" id="weightInput" step="0.1" placeholder="Morning weight (kg)..." class="flex-1 bg-black border border-zinc-800 rounded-xl px-4 py-3 text-white font-mono focus:outline-none focus:border-amber-500">
+                <button onclick="logWeight()" class="bg-zinc-800 hover:bg-zinc-700 text-amber-500 px-6 font-bold rounded-xl active:scale-95 text-sm uppercase tracking-wider border border-zinc-700">Log</button>
             </div>
-            <div class="bg-black p-2 rounded-xl">
+            <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-900">
                 <canvas id="weightChart"></canvas>
             </div>
         </div>
+
+        <div class="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-5 mt-10">
+            <h3 class="text-xs font-bold uppercase text-red-500 tracking-wider mb-2">System Diagnostics</h3>
+            <p class="text-xs text-zinc-500 mb-4">Clears all dry-run streaks, telemetry, graph points, and stored photos from phone cache.</p>
+            <button onclick="hardReset()" class="w-full py-3 bg-red-950/40 border border-red-900/50 text-red-400 text-xs font-bold uppercase tracking-widest rounded-xl active:scale-95 transition-all">
+                Emergency Data Reset
+            </button>
+        </div>
     </div>
 
-    <!-- TAB 3: PHOTOS -->
     <div id="tab-photos" class="tab-content">
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl">
-            <h2 class="text-2xl font-bold mb-4">Physique Update</h2>
-            <p class="text-zinc-400 text-xs mb-4">Note: Local storage limits apply. This acts as a session viewer.</p>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+            <h2 class="text-lg font-bold text-zinc-200 mb-2 tracking-tight">Visual Comp</h2>
+            <p class="text-xs text-zinc-500 mb-6">Track composition shifts. Images remain local to your device.</p>
             
             <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewPhoto(event)">
-            <label for="photoInput" class="block w-full py-4 bg-zinc-800 text-center font-bold rounded-2xl active:scale-95 transition-transform mb-6 border border-zinc-700 cursor-pointer">
-                📷 Select Photo
+            <label for="photoInput" class="block w-full py-3.5 bg-zinc-800 border border-zinc-700 text-center text-zinc-300 text-xs font-bold uppercase tracking-widest rounded-xl active:scale-95 transition-transform cursor-pointer">
+                Upload Frame
             </label>
             
-            <div id="photoPreview" class="w-full h-64 bg-black rounded-xl border border-zinc-800 flex items-center justify-center overflow-hidden">
-                <p class="text-zinc-600 text-sm">No photo selected</p>
+            <div id="photoPreview" class="w-full h-80 bg-black rounded-xl border border-zinc-800/80 flex items-center justify-center overflow-hidden mt-4">
+                <p class="text-zinc-600 text-[10px] uppercase tracking-widest font-mono">No Active Frame Loaded</p>
             </div>
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION BAR -->
-    <div class="fixed bottom-0 left-0 w-full bg-black/90 backdrop-blur-xl border-t border-zinc-800 pb-8 pt-4 px-6 flex justify-between z-50">
-        <button onclick="switchTab('workout')" id="btn-workout" class="nav-btn flex-1 text-white font-semibold flex flex-col items-center gap-1">
-            <span class="text-xl">🏋️</span><span class="text-[10px] uppercase tracking-wider">Routine</span>
+    <div class="fixed bottom-0 left-0 w-full bg-[#0B0C0E]/95 backdrop-blur-xl border-t border-zinc-800/80 pb-8 pt-3 px-8 flex justify-between z-50">
+        <button onclick="switchTab('workout')" id="btn-workout" class="nav-btn flex-1 text-amber-500 flex flex-col items-center gap-1 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"></path></svg>
+            <span class="text-[9px] font-bold uppercase tracking-widest mt-0.5">Console</span>
         </button>
-        <button onclick="switchTab('weight')" id="btn-weight" class="nav-btn flex-1 text-zinc-500 font-semibold flex flex-col items-center gap-1">
-            <span class="text-xl">📈</span><span class="text-[10px] uppercase tracking-wider">Weight</span>
+        <button onclick="switchTab('weight')" id="btn-weight" class="nav-btn flex-1 text-zinc-500 flex flex-col items-center gap-1 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"></path></svg>
+            <span class="text-[9px] font-bold uppercase tracking-widest mt-0.5">Telemetry</span>
         </button>
-        <button onclick="switchTab('photos')" id="btn-photos" class="nav-btn flex-1 text-zinc-500 font-semibold flex flex-col items-center gap-1">
-            <span class="text-xl">📸</span><span class="text-[10px] uppercase tracking-wider">Photos</span>
+        <button onclick="switchTab('photos')" id="btn-photos" class="nav-btn flex-1 text-zinc-500 flex flex-col items-center gap-1 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"></path></svg>
+            <span class="text-[9px] font-bold uppercase tracking-widest mt-0.5">Captures</span>
         </button>
     </div>
 
     <script>
-        // --- 1. WORKOUT LOGIC ---
+        // --- ARCHITECTURE STATE ---
         const routineOrder = ["Pull", "Push", "Legs", "Rest", "Upper", "Lower", "Rest"];
+        
+        // Exact 22-set distributions per week for targeted body-recomposition
         const exercises = {
-            "Pull": ["Deadlifts - 3x5", "Pull-ups - 3x8-10", "Barbell Rows - 3x8-12", "Bicep Curls - 3x12"],
-            "Push": ["Bench Press - 3x5-8", "Overhead Press - 3x8-10", "Incline DB Press - 3x10", "Tricep Pushdowns - 3x12"],
-            "Legs": ["Squats - 3x5-8", "Leg Press - 3x10-12", "RDLs - 3x10", "Calf Raises - 4x15"],
-            "Rest": ["Active Recovery", "Light Stretching", "Walk 10k Steps"],
-            "Upper": ["Incline Bench - 3x8-10", "Lat Pulldowns - 3x10", "Lateral Raises - 4x15", "Arms Superset - 3x12"],
-            "Lower": ["Front Squats - 3x8-10", "Bulgarian Split Squats - 3x10/leg", "Hamstring Curls - 3x12", "Planks - 3x60s"]
+            "Pull": ["Deadlifts - 4x5 (Heavy)", "Weighted Pull-ups - 4x8", "Barbell Rows - 4x10", "Lat Pulldowns - 3x12", "Barbell Curls - 4x10", "Hammer Curls - 3x12"],
+            "Push": ["Bench Press - 4x5", "Overhead Press - 4x8", "Incline DB Press - 4x10", "Cable Crossovers - 3x15", "Skullcrushers - 4x10", "Tricep Pushdowns - 3x12"],
+            "Legs": ["Squats - 4x5", "Leg Press - 4x10", "RDLs - 4x10", "Leg Extensions - 4x15", "Calf Raises - 5x15"],
+            "Rest": ["Active Recovery Protocol", "Hydrate: 4L Water", "Mobility / Full Body Stretch"],
+            "Upper": ["Incline Bench - 4x8", "Flat DB Press - 3x10", "T-Bar Rows - 4x10", "Seated Cable Rows - 3x12", "Lateral Raises - 5x15", "Hammer Strength Press - 3x12"],
+            "Lower": ["Front Squats - 4x8", "Bulgarian Split Squats - 3x10/leg", "Hamstring Curls - 4x12", "Walking Lunges - 3x20 Steps", "Hanging Leg Raises - 4x15"]
         };
+
+        const quotes = [
+            "\"The target is low body fat and dense architecture. Do not look for excuses.\"",
+            "\"Discipline is choosing between what you want now and what you want most.\"",
+            "\"Obsession will beat talent every single day.\"",
+            "\"You are engineering a completely different machine. Execute your inputs.\"",
+            "\"Embrace the training volume. That is where growth lives.\""
+        ];
         
         let currentDay = parseInt(localStorage.getItem('workoutDay')) || 0;
         let streak = parseInt(localStorage.getItem('workoutStreak')) || 0;
+        let weightData = JSON.parse(localStorage.getItem('weightData')) || [];
+        let weightChartInstance = null;
+
+        // --- CALORIE & STEP SYSTEM ---
+        function calculateTargets() {
+            const todayType = routineOrder[currentDay];
+            const isRestDay = todayType === "Rest";
+            
+            document.getElementById('stepTarget').innerText = isRestDay ? "15,000 steps" : "10,000 steps";
+
+            if (weightData.length > 0) {
+                const currentWeight = weightData[weightData.length - 1];
+                let calories = Math.round((currentWeight * 24) - 750);
+                if (calories < 1700) calories = 1700; 
+                document.getElementById('calorieTarget').innerText = `${calories} kcal`;
+            } else {
+                document.getElementById('calorieTarget').innerText = "Log Weight";
+            }
+        }
 
         function renderWorkout() {
             const todayType = routineOrder[currentDay];
             document.getElementById('workoutTitle').innerText = todayType;
             document.getElementById('streakDisplay').innerText = streak;
+            document.getElementById('quoteDisplay').innerText = quotes[Math.floor(Math.random() * quotes.length)];
             
+            calculateTargets();
+
             const listDiv = document.getElementById('exerciseList');
-            listDiv.innerHTML = exercises[todayType].map(ex => 
-                `<div class="bg-black p-4 rounded-xl border border-zinc-800 flex items-center justify-between">
-                    <span class="font-medium text-sm">${ex}</span>
-                    <input type="checkbox" class="w-5 h-5 accent-orange-500 rounded-md">
+            listDiv.innerHTML = exercises[todayType].map((ex, index) => 
+                `<div class="bg-black p-4 rounded-xl border border-zinc-800/80 flex items-center justify-between">
+                    <span class="font-medium text-xs text-zinc-300 font-mono tracking-wide">${ex}</span>
+                    <input type="checkbox" id="ex-${index}" class="w-5 h-5 accent-amber-500 rounded bg-zinc-900 border-zinc-700">
                 </div>`
             ).join('');
         }
@@ -125,32 +177,44 @@
             localStorage.setItem('workoutDay', currentDay);
             localStorage.setItem('workoutStreak', streak);
             renderWorkout();
-            alert("Workout logged! Great job keeping the streak.");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // --- 2. WEIGHT GRAPH LOGIC ---
-        let weightData = JSON.parse(localStorage.getItem('weightData')) || [];
-        let weightChartInstance = null;
+        function hardReset() {
+            if (confirm("Are you certain you want to wipe all telemetry logs and clear your active streak parameters back to zero?")) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        }
 
+        // --- METRICS ENGINE ---
         function initChart() {
             const ctx = document.getElementById('weightChart').getContext('2d');
+            Chart.defaults.color = '#71717a';
+            Chart.defaults.font.family = 'monospace';
+            
             weightChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: weightData.map((_, i) => `Day ${i+1}`),
+                    labels: weightData.map((_, i) => `Log ${i+1}`),
                     datasets: [{
-                        label: 'Weight (kg)',
+                        label: 'Mass',
                         data: weightData,
-                        borderColor: '#f97316', // Orange
-                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        borderColor: '#f59e0b', 
+                        backgroundColor: 'rgba(245, 158, 11, 0.04)',
                         borderWidth: 2,
-                        tension: 0.3,
+                        pointBackgroundColor: '#000',
+                        pointBorderColor: '#f59e0b',
+                        tension: 0.1,
                         fill: true
                     }]
                 },
                 options: {
                     responsive: true,
-                    scales: { y: { grid: { color: '#27272a' } }, x: { grid: { display: false } } },
+                    scales: { 
+                        y: { grid: { color: '#18181b' } }, 
+                        x: { grid: { display: false } } 
+                    },
                     plugins: { legend: { display: false } }
                 }
             });
@@ -162,13 +226,14 @@
             weightData.push(parseFloat(val));
             localStorage.setItem('weightData', JSON.stringify(weightData));
             
-            weightChartInstance.data.labels.push(`Day ${weightData.length}`);
+            weightChartInstance.data.labels.push(`Log ${weightData.length}`);
             weightChartInstance.data.datasets[0].data = weightData;
             weightChartInstance.update();
             document.getElementById('weightInput').value = '';
+            calculateTargets();
         }
 
-        // --- 3. PHOTO LOGIC ---
+        // --- IMAGE HANDLING & NAV ---
         function previewPhoto(event) {
             const file = event.target.files[0];
             if (file) {
@@ -180,251 +245,21 @@
             }
         }
 
-        // --- 4. NAVIGATION LOGIC ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
+            const titles = { 'workout': 'Console', 'weight': 'Telemetry', 'photos': 'Captures' };
+            document.getElementById('hudTitle').innerText = titles[tabId];
+
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-white');
+                btn.classList.remove('text-amber-500');
                 btn.classList.add('text-zinc-500');
             });
             document.getElementById(`btn-${tabId}`).classList.remove('text-zinc-500');
-            document.getElementById(`btn-${tabId}`).classList.add('text-white');
+            document.getElementById(`btn-${tabId}`).classList.add('text-amber-500');
         }
 
-        // --- 5. NOTIFICATIONS ---
-        function requestNotifications() {
-            if ("Notification" in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        alert("Notifications enabled! You will be reminded when the app is active.");
-                        setTimeout(() => { new Notification("Time to hit the iron. Stay consistent."); }, 5000);
-                    }
-                });
-            } else {
-                alert("Your browser does not support web notifications.");
-            }
-        }
-
-        // Initialize App
-        window.onload = () => {
-            renderWorkout();
-            initChart();
-        };
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Protocol</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #000; color: #fff; overscroll-behavior-y: none; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-    </style>
-</head>
-<body class="pb-24 pt-12 px-6">
-
-    <!-- Top Header & Streak -->
-    <div class="flex justify-between items-center mb-8">
-        <div>
-            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest">Cavill Protocol</p>
-            <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
-        </div>
-        <div class="bg-zinc-900 px-4 py-2 rounded-full border border-zinc-800">
-            <p class="text-sm font-medium text-orange-500">🔥 <span id="streakDisplay">0</span> Days</p>
-        </div>
-    </div>
-
-    <!-- TAB 1: WORKOUT -->
-    <div id="tab-workout" class="tab-content active">
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl mb-4">
-            <h2 id="workoutTitle" class="text-4xl font-black tracking-tight text-white mb-2">Loading...</h2>
-            <p class="text-zinc-400 text-sm mb-6">Strict form. Controlled eccentrics.</p>
-            
-            <div id="exerciseList" class="space-y-3 mb-8">
-                <!-- Exercises injected here via JS -->
-            </div>
-            
-            <button onclick="completeWorkout()" class="w-full py-4 bg-white text-black font-bold rounded-2xl active:scale-95 transition-transform">
-                Log Workout & Advance
-            </button>
-        </div>
-        <button onclick="requestNotifications()" class="w-full py-3 bg-zinc-900 border border-zinc-800 text-zinc-400 font-semibold rounded-2xl active:scale-95 transition-transform text-sm">
-            🔔 Enable Notifications
-        </button>
-    </div>
-
-    <!-- TAB 2: WEIGHT PROGRESS -->
-    <div id="tab-weight" class="tab-content">
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl">
-            <h2 class="text-2xl font-bold mb-4">Weight Log</h2>
-            <div class="flex gap-2 mb-6">
-                <input type="number" id="weightInput" placeholder="Enter kg..." class="flex-1 bg-black border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500">
-                <button onclick="logWeight()" class="bg-orange-500 px-6 font-bold rounded-xl active:scale-95">Save</button>
-            </div>
-            <div class="bg-black p-2 rounded-xl">
-                <canvas id="weightChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 3: PHOTOS -->
-    <div id="tab-photos" class="tab-content">
-        <div class="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-xl">
-            <h2 class="text-2xl font-bold mb-4">Physique Update</h2>
-            <p class="text-zinc-400 text-xs mb-4">Note: Local storage limits apply. This acts as a session viewer.</p>
-            
-            <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewPhoto(event)">
-            <label for="photoInput" class="block w-full py-4 bg-zinc-800 text-center font-bold rounded-2xl active:scale-95 transition-transform mb-6 border border-zinc-700 cursor-pointer">
-                📷 Select Photo
-            </label>
-            
-            <div id="photoPreview" class="w-full h-64 bg-black rounded-xl border border-zinc-800 flex items-center justify-center overflow-hidden">
-                <p class="text-zinc-600 text-sm">No photo selected</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOTTOM NAVIGATION BAR -->
-    <div class="fixed bottom-0 left-0 w-full bg-black/90 backdrop-blur-xl border-t border-zinc-800 pb-8 pt-4 px-6 flex justify-between z-50">
-        <button onclick="switchTab('workout')" id="btn-workout" class="nav-btn flex-1 text-white font-semibold flex flex-col items-center gap-1">
-            <span class="text-xl">🏋️</span><span class="text-[10px] uppercase tracking-wider">Routine</span>
-        </button>
-        <button onclick="switchTab('weight')" id="btn-weight" class="nav-btn flex-1 text-zinc-500 font-semibold flex flex-col items-center gap-1">
-            <span class="text-xl">📈</span><span class="text-[10px] uppercase tracking-wider">Weight</span>
-        </button>
-        <button onclick="switchTab('photos')" id="btn-photos" class="nav-btn flex-1 text-zinc-500 font-semibold flex flex-col items-center gap-1">
-            <span class="text-xl">📸</span><span class="text-[10px] uppercase tracking-wider">Photos</span>
-        </button>
-    </div>
-
-    <script>
-        // --- 1. WORKOUT LOGIC ---
-        const routineOrder = ["Pull", "Push", "Legs", "Rest", "Upper", "Lower", "Rest"];
-        const exercises = {
-            "Pull": ["Deadlifts - 3x5", "Pull-ups - 3x8-10", "Barbell Rows - 3x8-12", "Bicep Curls - 3x12"],
-            "Push": ["Bench Press - 3x5-8", "Overhead Press - 3x8-10", "Incline DB Press - 3x10", "Tricep Pushdowns - 3x12"],
-            "Legs": ["Squats - 3x5-8", "Leg Press - 3x10-12", "RDLs - 3x10", "Calf Raises - 4x15"],
-            "Rest": ["Active Recovery", "Light Stretching", "Walk 10k Steps"],
-            "Upper": ["Incline Bench - 3x8-10", "Lat Pulldowns - 3x10", "Lateral Raises - 4x15", "Arms Superset - 3x12"],
-            "Lower": ["Front Squats - 3x8-10", "Bulgarian Split Squats - 3x10/leg", "Hamstring Curls - 3x12", "Planks - 3x60s"]
-        };
-        
-        let currentDay = parseInt(localStorage.getItem('workoutDay')) || 0;
-        let streak = parseInt(localStorage.getItem('workoutStreak')) || 0;
-
-        function renderWorkout() {
-            const todayType = routineOrder[currentDay];
-            document.getElementById('workoutTitle').innerText = todayType;
-            document.getElementById('streakDisplay').innerText = streak;
-            
-            const listDiv = document.getElementById('exerciseList');
-            listDiv.innerHTML = exercises[todayType].map(ex => 
-                `<div class="bg-black p-4 rounded-xl border border-zinc-800 flex items-center justify-between">
-                    <span class="font-medium text-sm">${ex}</span>
-                    <input type="checkbox" class="w-5 h-5 accent-orange-500 rounded-md">
-                </div>`
-            ).join('');
-        }
-
-        function completeWorkout() {
-            currentDay = (currentDay + 1) % 7;
-            streak += 1;
-            localStorage.setItem('workoutDay', currentDay);
-            localStorage.setItem('workoutStreak', streak);
-            renderWorkout();
-            alert("Workout logged! Great job keeping the streak.");
-        }
-
-        // --- 2. WEIGHT GRAPH LOGIC ---
-        let weightData = JSON.parse(localStorage.getItem('weightData')) || [];
-        let weightChartInstance = null;
-
-        function initChart() {
-            const ctx = document.getElementById('weightChart').getContext('2d');
-            weightChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: weightData.map((_, i) => `Day ${i+1}`),
-                    datasets: [{
-                        label: 'Weight (kg)',
-                        data: weightData,
-                        borderColor: '#f97316', // Orange
-                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: { y: { grid: { color: '#27272a' } }, x: { grid: { display: false } } },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        function logWeight() {
-            const val = document.getElementById('weightInput').value;
-            if(!val) return;
-            weightData.push(parseFloat(val));
-            localStorage.setItem('weightData', JSON.stringify(weightData));
-            
-            weightChartInstance.data.labels.push(`Day ${weightData.length}`);
-            weightChartInstance.data.datasets[0].data = weightData;
-            weightChartInstance.update();
-            document.getElementById('weightInput').value = '';
-        }
-
-        // --- 3. PHOTO LOGIC ---
-        function previewPhoto(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // --- 4. NAVIGATION LOGIC ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-white');
-                btn.classList.add('text-zinc-500');
-            });
-            document.getElementById(`btn-${tabId}`).classList.remove('text-zinc-500');
-            document.getElementById(`btn-${tabId}`).classList.add('text-white');
-        }
-
-        // --- 5. NOTIFICATIONS ---
-        function requestNotifications() {
-            if ("Notification" in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        alert("Notifications enabled! You will be reminded when the app is active.");
-                        setTimeout(() => { new Notification("Time to hit the iron. Stay consistent."); }, 5000);
-                    }
-                });
-            } else {
-                alert("Your browser does not support web notifications.");
-            }
-        }
-
-        // Initialize App
         window.onload = () => {
             renderWorkout();
             initChart();
